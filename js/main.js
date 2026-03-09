@@ -216,3 +216,136 @@ window.addEventListener('scroll', throttledScroll);
 console.log('🎨 Portfolio website loaded successfully!');
 console.log('📱 Designed with Apple-style aesthetics');
 console.log('✨ Interactive elements initialized');
+
+// 文字躲避鼠标设计
+const heroTitle = document.querySelector('.hero-title');
+const titleSpans = heroTitle.innerText.split('').map(char => {
+    const span = document.createElement('span');
+    span.innerText = char === ' ' ? '\u00A0' : char;
+    span.style.display = 'inline-block';
+    span.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+    return span;
+});
+
+heroTitle.innerHTML = '';
+titleSpans.forEach(span => heroTitle.appendChild(span));
+
+heroTitle.addEventListener('mousemove', (e) => {
+    titleSpans.forEach(span => {
+        const rect = span.getBoundingClientRect();
+        const spanCenterX = rect.left + rect.width / 2;
+        const spanCenterY = rect.top + rect.height / 2;
+        
+        const dist = Math.sqrt(
+            Math.pow(e.clientX - spanCenterX, 2) + 
+            Math.pow(e.clientY - spanCenterY, 2)
+        );
+        
+        if (dist < 100) {
+            const angle = Math.atan2(e.clientY - spanCenterY, e.clientX - spanCenterX);
+            const force = (100 - dist) / 10;
+            const offsetX = Math.cos(angle) * force;
+            const offsetY = Math.sin(angle) * force;
+            
+            span.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+        } else {
+            span.style.transform = 'translate(0, 0)';
+        }
+    });
+});
+
+heroTitle.addEventListener('mouseleave', () => {
+    titleSpans.forEach(span => {
+        span.style.transform = 'translate(0, 0)';
+    });
+});
+
+// logo彩蛋设计
+const logo = document.querySelector('.logo');
+let logoClickCount = 0;
+const requiredClicks = 5;
+
+logo.addEventListener('click', (e) => {
+    logoClickCount++;
+    
+    if (logoClickCount >= requiredClicks) {
+        logoClickCount = 0;
+        triggerEasterEgg();
+    }
+});
+
+function triggerEasterEgg() {
+    // 创建一些彩色粒子从Logo爆炸出来
+    for (let i = 0; i < 20; i++) {
+        createParticle(logo);
+    }
+    
+    // 显示一条有趣的消息
+    const message = document.createElement('div');
+    message.textContent = '🎉 你发现我了！';
+    message.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 20px 40px;
+        border-radius: 20px;
+        font-size: 1.5rem;
+        font-weight: 600;
+        z-index: 10000;
+        animation: pop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    `;
+    document.body.appendChild(message);
+    
+    setTimeout(() => {
+        message.style.animation = 'fade 0.3s ease forwards';
+        setTimeout(() => message.remove(), 300);
+    }, 2000);
+}
+
+function createParticle(element) {
+    const particle = document.createElement('div');
+    const colors = ['#667eea', '#764ba2', '#FF6B35', '#FFD93D', '#00D9A3'];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    
+    particle.style.cssText = `
+        position: fixed;
+        width: ${Math.random() * 10 + 5}px;
+        height: ${Math.random() * 10 + 5}px;
+        background: ${color};
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9999;
+        top: ${element.getBoundingClientRect().top + element.offsetHeight / 2}px;
+        left: ${element.getBoundingClientRect().left + element.offsetWidth / 2}px;
+    `;
+    
+    document.body.appendChild(particle);
+    
+    const angle = Math.random() * Math.PI * 2;
+    const velocity = Math.random() * 300 + 100;
+    const vx = Math.cos(angle) * velocity;
+    const vy = Math.sin(angle) * velocity;
+    
+    let x = 0, y = 0;
+    let opacity = 1;
+    
+    function animate() {
+        x += vx * 0.016;
+        y += vy * 0.016 + 5; // 添加重力
+        opacity -= 0.02;
+        
+        particle.style.transform = `translate(${x}px, ${y}px)`;
+        particle.style.opacity = opacity;
+        
+        if (opacity > 0) {
+            requestAnimationFrame(animate);
+        } else {
+            particle.remove();
+        }
+    }
+    
+    requestAnimationFrame(animate);
+}

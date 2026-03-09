@@ -6,13 +6,16 @@
 }
 
 :root {
-    --primary-color: #0071E3;  /* 苹果蓝 */
-    --text-dark: #1D1D1F;      /* 深灰 - 标题 */
-    --text-light: #86868B;     /* 浅灰 - 正文 */
-    --bg-white: #FFFFFF;       /* 纯白 */
-    --bg-light: #F5F5F7;       /* 浅灰背景 */
-    --border-color: #D2D2D7;   /* 边框颜色 */
-    --transition: all 0.3s ease;
+    --primary-color: #0071E3;       /* 苹果蓝 */
+    --secondary-color: #5E5CE6;     /* 紫色 */
+    --text-dark: #1D1D1F;           /* 深灰 - 标题 */
+    --text-light: #86868B;          /* 浅灰 - 正文 */
+    --bg-white: #FFFFFF;             /* 纯白 */
+    --bg-light: #F5F5F7;             /* 浅灰背景 */
+    --border-color: #D2D2D7;         /* 边框颜色 */
+    --gradient-start: #667eea;       /* 渐变起始色 */
+    --gradient-end: #764ba2;         /* 渐变结束色 */
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* 更平滑的缓动函数 */
 }
 
 body {

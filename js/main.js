@@ -1,198 +1,350 @@
-// ==================== 鼠标跟随光晕效果 ====================
-const cursorGlow = document.createElement('div');
-cursorGlow.className = 'cursor-glow';
-document.body.appendChild(cursorGlow);
+// ==================== 状态管理 ====================
+const State = {
+    currentScene: 'chair', // 'chair', 'transition', 'main'
+    isAnimating: false
+};
 
-let mouseX = 0, mouseY = 0;
-let glowX = 0, glowY = 0;
+// ==================== 场景元素 ====================
+const scenes = {
+    chair: document.getElementById('chair-scene'),
+    transition: document.getElementById('transition-scene'),
+    main: document.getElementById('main-scene')
+};
 
-document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
+const questionText = document.getElementById('question-text');
+const sitPrompt = document.querySelector('.sit-prompt');
+const floatingCards = document.querySelectorAll('.floating-card');
+
+// ==================== 初始化 ====================
+document.addEventListener('DOMContentLoaded', () => {
+    initializeApp();
 });
 
+function initializeApp() {
+    // 绑定"坐下来"点击事件
+    sitPrompt.addEventListener('click', handleSitDown);
+    
+    // 初始化漂浮卡片的交互效果
+    initializeFloatingCards();
+    
+    // 开始环境粒子动画
+    startAmbientAnimation();
+    
+    console.log('🎨 Portfolio initialized');
+}
+
+// ==================== "坐下来"交互 ====================
+function handleSitDown() {
+    if (State.isAnimating) return;
+    State.isAnimating = true;
+    
+    // 隐藏椅子场景
+    scenes.chair.classList.remove('active');
+    
+    // 显示转换动画场景
+    scenes.transition.classList.add('active');
+    
+    // 播放坐下音效（可选，这里用视觉代替）
+    playSittingSound();
+    
+    // 模拟坐下过程
+    setTimeout(() => {
+        // 隐藏转换场景
+        scenes.transition.classList.remove('active');
+        
+        // 显示主场景
+        scenes.main.classList.add('active');
+        State.currentScene = 'main';
+        
+        // 开始主场景动画
+        startMainSceneAnimation();
+        
+        State.isAnimating = false;
+    }, 1500); // 1.5秒的转换动画
+}
+
+function playSittingSound() {
+    // 这里可以添加音效，暂时留空
+    // 视觉上已经通过CSS动画模拟了
+}
+
+// ==================== 主场景动画 ====================
+function startMainSceneAnimation() {
+    // 打字机效果显示"你想知道什么"
+    typeWriterEffect("你想知道什么");
+    
+    // 漂浮卡片进入
+    floatingCards.forEach((card, index) => {
+        const delay = index * 0.5;
+        card.style.animationDelay = `${delay}s`;
+        
+        // 添加持续漂浮动画
+        startFloatingAnimation(card, index);
+    });
+    
+    // 开始环境光晕效果
+    startCursorGlow();
+}
+
+// ==================== 打字机效果 ====================
+function typeWriterEffect(text) {
+    let index = 0;
+    const speed = 150; // 打字速度（毫秒）
+    
+    function type() {
+        if (index < text.length) {
+            questionText.textContent += text.charAt(index);
+            index++;
+            setTimeout(type, speed);
+        }
+    }
+    
+    type();
+}
+
+// ==================== 漂浮卡片动画 ====================
+function startFloatingAnimation(card, index) {
+    let time = 0;
+    const baseX = parseFloat(getComputedStyle(card).getPropertyValue('--x'));
+    const baseY = parseFloat(getComputedStyle(card).getPropertyValue('--y'));
+    
+    function animate() {
+        if (State.currentScene !== 'main') return;
+        
+        time += 0.01;
+        
+        // 每个卡片有不同的漂浮参数
+        const amplitude = 10 + (index % 3) * 5; // 振幅
+        const speed = 0.5 + (index % 2) * 0.3; // 速度
+        
+        const offsetX = Math.sin(time * speed) * amplitude;
+        const offsetY = Math.cos(time * speed * 0.7) * amplitude;
+        
+        const currentX = baseX + offsetX;
+        const currentY = baseY + offsetY;
+        
+        card.style.setProperty('--x', `${currentX}px`);
+        card.style.setProperty('--y', `${currentY}px`);
+        
+        requestAnimationFrame(animate);
+    }
+    
+    animate();
+}
+
+// ==================== 卡片交互效果 ====================
+function initializeFloatingCards() {
+    floatingCards.forEach((card, index) => {
+        // 鼠标移入：暂停漂浮，放大，高亮
+        card.addEventListener('mouseenter', () => {
+            card.style.animationPlayState = 'paused';
+            card.style.zIndex = '100';
+        });
+        
+        // 鼠标移出：恢复漂浮
+        card.addEventListener('mouseleave', () => {
+            card.style.animationPlayState = 'running';
+            card.style.zIndex = '10';
+        });
+        
+        // 鼠标跟随效果
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // 卡片3D倾斜效果
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const rotateX = (y - centerY) / 10;
+            const rotateY = (centerX - x) / 10;
+            
+            card.style.transform = `
+                translate(var(--x), var(--y)) 
+                scale(1.05) 
+                perspective(1000px) 
+                rotateX(${rotateX}deg) 
+                rotateY(${rotateY}deg)
+            `;
+        });
+        
+        // 点击卡片时的反馈
+        card.addEventListener('click', () => {
+            // 创建点击波纹效果
+            createRipple(card);
+            
+            // 添加一个"弹跳"效果
+            card.style.transform = `
+                translate(var(--x), var(--y)) 
+                scale(0.95)
+            `;
+            
+            setTimeout(() => {
+                card.style.transform = `
+                    translate(var(--x), var(--y)) 
+                    scale(1.05)
+                `;
+            }, 150);
+        });
+    });
+}
+
+// ==================== 点击波纹效果 ====================
+function createRipple(card) {
+    const ripple = document.createElement('div');
+    ripple.style.cssText = `
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(circle, rgba(102, 126, 234, 0.4) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+        transform: translate(-50%, -50%) scale(0);
+        animation: ripple-expand 0.6s ease-out forwards;
+    `;
+    
+    card.appendChild(ripple);
+    
+    setTimeout(() => {
+        ripple.remove();
+    }, 600);
+}
+
+// 添加波纹动画
+const rippleStyle = document.createElement('style');
+rippleStyle.textContent = `
+    @keyframes ripple-expand {
+        0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+        100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+    }
+`;
+document.head.appendChild(rippleStyle);
+
+// ==================== 鼠标光晕效果 ====================
+let cursorGlow;
+let mouseX = 0;
+let mouseY = 0;
+
+function startCursorGlow() {
+    // 创建鼠标跟随光晕
+    cursorGlow = document.createElement('div');
+    cursorGlow.className = 'cursor-glow-main';
+    cursorGlow.style.cssText = `
+        position: fixed;
+        width: 60px;
+        height: 60px;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease;
+    `;
+    document.body.appendChild(cursorGlow);
+    
+    // 鼠标移动跟踪
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    });
+    
+    // 鼠标进入文档
+    document.addEventListener('mouseenter', () => {
+        cursorGlow.style.opacity = '0.5';
+    }, true);
+    
+    // 鼠标离开文档
+    document.addEventListener('mouseleave', () => {
+        cursorGlow.style.opacity = '0';
+    }, true);
+    
+    // 动画循环
+    animateGlow();
+}
+
 function animateGlow() {
-    glowX += (mouseX - glowX) * 0.1;
-    glowY += (mouseY - glowY) * 0.1;
-    cursorGlow.style.left = glowX + 'px';
-    cursorGlow.style.top = glowY + 'px';
+    if (cursorGlow) {
+        let glowX = parseFloat(cursorGlow.style.left) || 0;
+        let glowY = parseFloat(cursorGlow.style.top) || 0;
+        
+        // 平滑跟随
+        glowX += (mouseX - glowX) * 0.15;
+        glowY += (mouseY - glowY) * 0.15;
+        
+        cursorGlow.style.left = `${glowX}px`;
+        cursorGlow.style.top = `${glowY}px`;
+    }
+    
     requestAnimationFrame(animateGlow);
 }
 
-animateGlow();
+// ==================== 环境动画 ====================
+function startAmbientAnimation() {
+    // 背景渐变动画
+    let hue = 230;
+    const body = document.body;
+    
+    setInterval(() => {
+        hue = (hue + 0.1) % 360;
+        body.style.background = `linear-gradient(135deg, hsl(${hue}, 70%, 60%) 0%, hsl(${hue + 30}, 70%, 60%) 100%)`;
+    }, 50);
+}
 
-// 显示光晕效果
-document.addEventListener('mouseenter', () => {
-    cursorGlow.style.opacity = '1';
-}, true);
-
-document.addEventListener('mouseleave', () => {
-    cursorGlow.style.opacity = '0';
-}, true);
-
-// ==================== 项目卡片鼠标跟踪效果 ====================
-const projectCards = document.querySelectorAll('.project-card');
-
-projectCards.forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        card.style.setProperty('--mouse-x', x + 'px');
-        card.style.setProperty('--mouse-y', y + 'px');
-    });
-});
-
-// ==================== 平滑滚动 ====================
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
-});
-
-// ==================== 导航栏滚动效果 ====================
-const navbar = document.querySelector('.navbar');
-let lastScroll = 0;
-
-window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
-
-    // 添加/移除滚动状态
-    if (currentScroll > 50) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
-    }
-
-    lastScroll = currentScroll;
-});
-
-// ==================== 滚动动画 ====================
-const observerOptions = {
-    root: null,
-    rootMargin: '0px',
-    threshold: 0.1
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-        }
-    });
-}, observerOptions);
-
-// 为所有带有fade-in-up类的元素添加动画
-document.querySelectorAll('.fade-in-up').forEach(element => {
-    observer.observe(element);
-});
-
-// ==================== 滚动进度指示器 ====================
-const progressBar = document.createElement('div');
-progressBar.style.cssText = `
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 0%;
-    height: 3px;
-    background: linear-gradient(90deg, #0071E3, #5E5CE6);
-    z-index: 9999;
-    transition: width 0.1s ease;
-`;
-document.body.appendChild(progressBar);
-
-window.addEventListener('scroll', () => {
-    const scrollTop = window.pageYOffset;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const scrollPercent = (scrollTop / docHeight) * 100;
-    progressBar.style.width = scrollPercent + '%';
-});
-
-// ==================== 按钮磁吸效果 ====================
-const magneticButtons = document.querySelectorAll('.cta-button');
-
-magneticButtons.forEach(button => {
-    button.addEventListener('mousemove', (e) => {
-        const rect = button.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-
-        button.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
-    });
-
-    button.addEventListener('mouseleave', () => {
-        button.style.transform = 'translate(0, 0)';
-    });
-});
-
-// ==================== 平滑进入动画 ====================
-const animateOnLoad = () => {
-    const animatedElements = document.querySelectorAll('.animate-text');
-
-    animatedElements.forEach((element, index) => {
-        setTimeout(() => {
-            element.style.opacity = '1';
-            element.style.transform = 'translateY(0)';
-        }, 100 + index * 150);
-    });
-};
-
-// 页面加载完成后执行
-window.addEventListener('load', animateOnLoad);
-
-// ==================== 技能标签点击反馈 ====================
-const skillTags = document.querySelectorAll('.skills-tags span, .project-tags span');
-
+// ==================== 技能标签点击效果 ====================
+const skillTags = document.querySelectorAll('.skill-tag');
 skillTags.forEach(tag => {
     tag.addEventListener('click', function() {
-        this.style.transform = 'scale(0.95)';
+        // 创建弹跳效果
+        this.style.transition = 'transform 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+        this.style.transform = 'translateY(-10px) scale(1.2)';
+        
+        // 随机改变颜色
+        const colors = ['#FF6B35', '#667eea', '#764ba2', '#FFD93D', '#00D9A3'];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        this.style.background = randomColor;
+        
         setTimeout(() => {
-            this.style.transform = 'scale(1)';
-        }, 150);
+            this.style.transform = 'translateY(0) scale(1)';
+        }, 200);
     });
 });
 
-// ==================== 导航链接激活状态 ====================
-const sections = document.querySelectorAll('section[id]');
-const navLinks = document.querySelectorAll('.nav-links a');
-
-window.addEventListener('scroll', () => {
-    let current = '';
-
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
-        if (pageYOffset >= sectionTop - 200) {
-            current = section.getAttribute('id');
-        }
+// ==================== 联系链接悬停效果 ====================
+const contactLinks = document.querySelectorAll('.contact-link');
+contactLinks.forEach(link => {
+    link.addEventListener('mouseenter', function() {
+        // 创建一个"飘出"的效果
+        this.style.transition = 'all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+        this.style.transform = 'translateY(-5px) scale(1.05)';
+        
+        // 添加闪烁效果
+        const icon = this.querySelector('span');
+        icon.style.animation = 'icon-shake 0.5s ease infinite';
     });
-
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === `#${current}`) {
-            link.classList.add('active');
-        }
+    
+    link.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+        
+        // 停止闪烁
+        const icon = this.querySelector('span');
+        icon.style.animation = '';
     });
 });
 
-// ==================== 页面可见性检测 ====================
-document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-        cursorGlow.style.display = 'none';
-    } else {
-        cursorGlow.style.display = 'block';
+// 添加图标摇晃动画
+const iconStyle = document.createElement('style');
+iconStyle.textContent = `
+    @keyframes icon-shake {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(-10deg); }
+        75% { transform: rotate(10deg); }
     }
-});
+`;
+document.head.appendChild(iconStyle);
 
-// ==================== 性能优化：节流函数 ====================
+// ==================== 性能优化 ====================
+// 使用节流函数优化鼠标移动事件
 function throttle(func, limit) {
     let inThrottle;
     return function() {
@@ -206,146 +358,27 @@ function throttle(func, limit) {
     };
 }
 
-// 使用节流优化滚动事件
-const throttledScroll = throttle(() => {
-    // 可以在这里添加其他滚动相关的优化逻辑
-}, 100);
+// 节流鼠标移动事件
+document.addEventListener('mousemove', throttle((e) => {
+    // 这里可以添加其他需要节流的鼠标事件处理
+}, 50));
 
-window.addEventListener('scroll', throttledScroll);
-
-console.log('🎨 Portfolio website loaded successfully!');
-console.log('📱 Designed with Apple-style aesthetics');
-console.log('✨ Interactive elements initialized');
-
-// 文字躲避鼠标设计
-const heroTitle = document.querySelector('.hero-title');
-const titleSpans = heroTitle.innerText.split('').map(char => {
-    const span = document.createElement('span');
-    span.innerText = char === ' ' ? '\u00A0' : char;
-    span.style.display = 'inline-block';
-    span.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-    return span;
-});
-
-heroTitle.innerHTML = '';
-titleSpans.forEach(span => heroTitle.appendChild(span));
-
-heroTitle.addEventListener('mousemove', (e) => {
-    titleSpans.forEach(span => {
-        const rect = span.getBoundingClientRect();
-        const spanCenterX = rect.left + rect.width / 2;
-        const spanCenterY = rect.top + rect.height / 2;
-        
-        const dist = Math.sqrt(
-            Math.pow(e.clientX - spanCenterX, 2) + 
-            Math.pow(e.clientY - spanCenterY, 2)
-        );
-        
-        if (dist < 100) {
-            const angle = Math.atan2(e.clientY - spanCenterY, e.clientX - spanCenterX);
-            const force = (100 - dist) / 10;
-            const offsetX = Math.cos(angle) * force;
-            const offsetY = Math.sin(angle) * force;
-            
-            span.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-        } else {
-            span.style.transform = 'translate(0, 0)';
+// ==================== 页面可见性检测 ====================
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        // 页面隐藏时，暂停动画
+        if (cursorGlow) {
+            cursorGlow.style.opacity = '0';
         }
-    });
-});
-
-heroTitle.addEventListener('mouseleave', () => {
-    titleSpans.forEach(span => {
-        span.style.transform = 'translate(0, 0)';
-    });
-});
-
-// logo彩蛋设计
-const logo = document.querySelector('.logo');
-let logoClickCount = 0;
-const requiredClicks = 5;
-
-logo.addEventListener('click', (e) => {
-    logoClickCount++;
-    
-    if (logoClickCount >= requiredClicks) {
-        logoClickCount = 0;
-        triggerEasterEgg();
-    }
-});
-
-function triggerEasterEgg() {
-    // 创建一些彩色粒子从Logo爆炸出来
-    for (let i = 0; i < 20; i++) {
-        createParticle(logo);
-    }
-    
-    // 显示一条有趣的消息
-    const message = document.createElement('div');
-    message.textContent = '🎉 你发现我了！';
-    message.style.cssText = `
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        padding: 20px 40px;
-        border-radius: 20px;
-        font-size: 1.5rem;
-        font-weight: 600;
-        z-index: 10000;
-        animation: pop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    `;
-    document.body.appendChild(message);
-    
-    setTimeout(() => {
-        message.style.animation = 'fade 0.3s ease forwards';
-        setTimeout(() => message.remove(), 300);
-    }, 2000);
-}
-
-function createParticle(element) {
-    const particle = document.createElement('div');
-    const colors = ['#667eea', '#764ba2', '#FF6B35', '#FFD93D', '#00D9A3'];
-    const color = colors[Math.floor(Math.random() * colors.length)];
-    
-    particle.style.cssText = `
-        position: fixed;
-        width: ${Math.random() * 10 + 5}px;
-        height: ${Math.random() * 10 + 5}px;
-        background: ${color};
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 9999;
-        top: ${element.getBoundingClientRect().top + element.offsetHeight / 2}px;
-        left: ${element.getBoundingClientRect().left + element.offsetWidth / 2}px;
-    `;
-    
-    document.body.appendChild(particle);
-    
-    const angle = Math.random() * Math.PI * 2;
-    const velocity = Math.random() * 300 + 100;
-    const vx = Math.cos(angle) * velocity;
-    const vy = Math.sin(angle) * velocity;
-    
-    let x = 0, y = 0;
-    let opacity = 1;
-    
-    function animate() {
-        x += vx * 0.016;
-        y += vy * 0.016 + 5; // 添加重力
-        opacity -= 0.02;
-        
-        particle.style.transform = `translate(${x}px, ${y}px)`;
-        particle.style.opacity = opacity;
-        
-        if (opacity > 0) {
-            requestAnimationFrame(animate);
-        } else {
-            particle.remove();
+    } else {
+        // 页面显示时，恢复动画
+        if (cursorGlow && State.currentScene === 'main') {
+            cursorGlow.style.opacity = '0.5';
         }
     }
-    
-    requestAnimationFrame(animate);
-}
+});
+
+// ==================== 控制台彩蛋 ====================
+console.log('%c🎨 CUI XP Portfolio', 'font-size: 24px; font-weight: bold; color: #FF6B35;');
+console.log('%c✨ Interactive Experience', 'font-size: 14px; color: #667eea;');
+console.log('%c💡 提示：点击"坐下来"开始探索', 'font-size: 12px; color: #86868B;');

@@ -3,190 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="CUI XP - 产品设计师个人作品集，专注于高品质、可持续的产品设计，擅长市场调研、用户体验优化">
-    <meta name="keywords" content="产品设计师, UI/UX设计, 市场调研, Rhino, Keyshot, 产品设计">
-    <meta name="author" content="CUI XP">
-    <meta name="robots" content="index, follow">
-    
-    <!-- Open Graph标签 -->
-    <meta property="og:title" content="CUI XP - 产品设计师 | 个人作品集">
-    <meta property="og:description" content="专注于高品质、可持续的产品设计，擅长市场调研、用户体验优化">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://cui7723.github.io/my-portfolio/">
-    
-    <title>CUI XP - 产品设计师 | 个人作品集</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>CUI XP - 产品设计师</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- 导航栏 -->
-    <header class="navbar">
-        <nav class="container">
-            <a href="#" class="logo">CUI XP</a>
-            <ul class="nav-links">
-                <li><a href="#about">关于</a></li>
-                <li><a href="#projects">项目</a></li>
-                <li><a href="#skills">技能</a></li>
-                <li><a href="#contact">联系</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main>
-        <!-- 首屏区域 -->
-        <section class="hero" aria-label="个人介绍">
-            <div class="hero-background">
-                <div class="gradient-overlay"></div>
+    <!-- 场景容器 -->
+    <div id="scene">
+        <!-- 初始场景：椅子 -->
+        <div id="chair-scene" class="scene active">
+            <div class="chair-container">
+                <div class="chair">
+                    <div class="chair-back">
+                        <div class="chair-back-detail"></div>
+                    </div>
+                    <div class="chair-seat"></div>
+                    <div class="chair-leg left"></div>
+                    <div class="chair-leg right"></div>
+                </div>
+                <div class="shadow"></div>
             </div>
-            <div class="container">
-                <div class="hero-content">
-                    <h1 class="hero-title">
-                        <span class="animate-text delay-1">设计改变体验</span>
-                        <span class="animate-text delay-2">从<span class="highlight">问题</span>到<span class="highlight">方案</span></span>
-                        <span class="animate-text delay-2">每一步都为用户考虑</span>
-                    </h1>
-                    <p class="hero-subtitle animate-text delay-2">产品设计师 · 深度市场调研 · 用户体验设计</p>
-                    <div class="hero-buttons animate-text delay-3">
-                        <a href="#contact" class="cta-button primary">联系我</a>
-                        <a href="#projects" class="cta-button secondary">查看作品</a>
+            <div class="sit-prompt">
+                <span class="prompt-text">坐下来</span>
+                <div class="prompt-arrow">↓</div>
+            </div>
+        </div>
+
+        <!-- 转换动画场景 -->
+        <div id="transition-scene" class="scene">
+            <div class="transition-overlay"></div>
+            <div class="sitting-animation">
+                <div class="body-silhouette"></div>
+            </div>
+        </div>
+
+        <!-- 主内容场景 -->
+        <div id="main-scene" class="scene">
+            <!-- 顶部提示 -->
+            <div class="question-prompt">
+                <span class="question-text" id="question-text"></span>
+            </div>
+
+            <!-- 漂浮容器 -->
+            <div class="floating-container">
+                <!-- 个人信息卡片 -->
+                <div class="floating-card profile-card" style="--delay: 0s; --x: -200px; --y: 100px;">
+                    <div class="card-icon">👨‍💻</div>
+                    <div class="card-content">
+                        <h3>CUI XP</h3>
+                        <p class="subtitle">产品设计师</p>
+                        <p class="description">大三在校生，专注于高品质、可持续的产品设计</p>
+                        <div class="skills-mini">
+                            <span>市场调研</span>
+                            <span>用户体验</span>
+                            <span>情感设计</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="scroll-indicator">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                </svg>
-            </div>
-        </section>
 
-        <!-- 关于我 -->
-        <section id="about" class="section" aria-labelledby="about-title">
-            <div class="container">
-                <h2 id="about-title" class="section-title fade-in-up">关于我</h2>
-                <p class="about-text fade-in-up delay-1">
-                    我是一名在校产品设计师，目前大三，专注于高品质、可持续的产品设计。
-                    擅长市场调研、产品调研、设计方案复现、产品情感永续设计，热衷于用户体验优化。
-                    目前寻找产品设计师职位。
-                </p>
-            </div>
-        </section>
-
-        <!-- 项目展示 -->
-        <section id="projects" class="section" aria-labelledby="projects-title">
-            <div class="container">
-                <h2 id="projects-title" class="section-title fade-in-up">精选项目</h2>
-                <div class="projects-grid">
-                    <!-- 第一个项目卡片 -->
-                    <article class="project-card fade-in-up delay-1">
-                        <div class="project-image" style="background-image: url('images/JGXFJQR.jpg')">
-                            <span class="placeholder">森林激光消防装备</span>
-                        </div>
+                <!-- 项目卡片1 -->
+                <div class="floating-card project-card" style="--delay: 0.5s; --x: 250px; --y: -80px;">
+                    <div class="card-icon">🔥</div>
+                    <div class="card-content">
                         <h3>森林激光消防装备</h3>
-                        <p>使用高能激光破环燃烧链式反应达到消防目的</p>
-                        <div class="project-tags">
+                        <p class="description">使用高能激光破环燃烧链式反应达到消防目的</p>
+                        <div class="tech-tags">
                             <span>React</span>
                             <span>Next.js</span>
                             <span>TypeScript</span>
                         </div>
-                    </article>
-                    
-                    <!-- 第二个项目卡片 -->
-                    <article class="project-card fade-in-up delay-2">
-                        <div class="project-image" style="background-image: url('images/LHSGJ.jpg')">
-                            <span class="placeholder">无人联合收割与回收装备</span>
-                        </div>
-                        <h3>无人联合收割与回收装备</h3>
-                        <p>将收割的农作物颗粒化处理再压缩为矩形排出</p>
-                        <div class="project-tags">
+                    </div>
+                </div>
+
+                <!-- 项目卡片2 -->
+                <div class="floating-card project-card" style="--delay: 1s; --x: -150px; --y: -200px;">
+                    <div class="card-icon">🚜</div>
+                    <div class="card-content">
+                        <h3>无人联合收割装备</h3>
+                        <p class="description">将收割的农作物颗粒化处理再压缩为矩形排出</p>
+                        <div class="tech-tags">
                             <span>Vue.js</span>
                             <span>ECharts</span>
                             <span>WebSocket</span>
                         </div>
-                    </article>
-                    
-                    <!-- 第三个项目卡片 -->
-                    <article class="project-card fade-in-up delay-3">
-                        <div class="project-image" style="background-image: url('images/XFWRJ.jpg')">
-                            <span class="placeholder">联动式消防无人机</span>
-                        </div>
+                    </div>
+                </div>
+
+                <!-- 项目卡片3 -->
+                <div class="floating-card project-card" style="--delay: 1.5s; --x: 200px; --y: 150px;">
+                    <div class="card-icon">🚁</div>
+                    <div class="card-content">
                         <h3>联动式消防无人机</h3>
-                        <p>以移动消防车为基础将高压水管与无人机衔接应对高层火灾</p>
-                        <div class="project-tags">
+                        <p class="description">以移动消防车为基础将高压水管与无人机衔接应对高层火灾</p>
+                        <div class="tech-tags">
                             <span>React</span>
                             <span>Storybook</span>
                             <span>Jest</span>
                         </div>
-                    </article>
+                    </div>
                 </div>
-            </div>
-        </section>
 
-        <!-- 技能清单 -->
-        <section id="skills" class="section" aria-labelledby="skills-title">
-            <div class="container">
-                <h2 id="skills-title" class="section-title fade-in-up">技能清单</h2>
-                <div class="skills-wrapper">
-                    <div class="skill-category fade-in-up delay-1">
-                        <h3>设计工具</h3>
-                        <div class="skills-tags">
-                            <span>Rhino 8</span>
-                            <span>Keyshot</span>
-                            <span>Figma</span>
-                            <span>Sketch</span>
-                            <span>Adobe Suite</span>
-                        </div>
-                    </div>
-                    <div class="skill-category fade-in-up delay-2">
-                        <h3>前端开发</h3>
-                        <div class="skills-tags">
-                            <span>React</span>
-                            <span>Vue.js</span>
-                            <span>TypeScript</span>
-                            <span>JavaScript</span>
-                            <span>HTML5/CSS3</span>
-                        </div>
-                    </div>
-                    <div class="skill-category fade-in-up delay-3">
-                        <h3>其他技能</h3>
-                        <div class="skills-tags">
-                            <span>市场调研</span>
-                            <span>产品调研</span>
-                            <span>用户体验优化</span>
-                            <span>情感化设计</span>
+                <!-- 技能云 -->
+                <div class="floating-card skills-cloud" style="--delay: 2s; --x: -100px; --y: 50px;">
+                    <div class="card-icon">🎨</div>
+                    <div class="card-content">
+                        <h3>技能</h3>
+                        <div class="skill-list">
+                            <span class="skill-tag">Rhino 8</span>
+                            <span class="skill-tag">Keyshot</span>
+                            <span class="skill-tag">Figma</span>
+                            <span class="skill-tag">Sketch</span>
+                            <span class="skill-tag">Adobe Suite</span>
+                            <span class="skill-tag">React</span>
+                            <span class="skill-tag">Vue.js</span>
+                            <span class="skill-tag">TypeScript</span>
+                            <span class="skill-tag">JavaScript</span>
+                            <span class="skill-tag">HTML5/CSS3</span>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
 
-        <!-- 联系方式 -->
-        <section id="contact" class="section" aria-labelledby="contact-title">
-            <div class="container">
-                <h2 id="contact-title" class="section-title fade-in-up">联系我</h2>
-                <div class="contact-info fade-in-up delay-1">
-                    <p>期待与您交流合作机会</p>
-                    <div class="contact-links">
-                        <a href="mailto:1821083035@qq.com" class="contact-link">
-                            1821083035@qq.com
-                        </a>
-                        <a href="https://github.com/CUI%20XP" target="_blank" rel="noopener noreferrer" class="contact-link">
-                            GitHub
-                        </a>
-                        <a href="https://linkedin.com/in/CUI%20XP" target="_blank" rel="noopener noreferrer" class="contact-link">
-                            LinkedIn
-                        </a>
+                <!-- 联系卡片 -->
+                <div class="floating-card contact-card" style="--delay: 2.5s; --x: 150px; --y: -250px;">
+                    <div class="card-icon">📬</div>
+                    <div class="card-content">
+                        <h3>联系我</h3>
+                        <p class="description">期待与您交流合作机会</p>
+                        <div class="contact-links">
+                            <a href="mailto:1821083035@qq.com" class="contact-link">
+                                <span>📧</span> 邮箱
+                            </a>
+                            <a href="https://github.com/CUI%20XP" class="contact-link">
+                                <span>🐱</span> GitHub
+                            </a>
+                            <a href="https://linkedin.com/in/CUI%20XP" class="contact-link">
+                                <span>💼</span> LinkedIn
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </section>
-    </main>
 
-    <!-- 页脚 -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2024 CUI XP. All rights reserved.</p>
+            <!-- 背景装饰 -->
+            <div class="ambient-particles">
+                <div class="particle" style="--x: 10vw; --y: 20vh; --size: 4px; --duration: 8s;"></div>
+                <div class="particle" style="--x: 80vw; --y: 15vh; --size: 3px; --duration: 6s;"></div>
+                <div class="particle" style="--x: 30vw; --y: 70vh; --size: 5px; --duration: 10s;"></div>
+                <div class="particle" style="--x: 90vw; --y: 60vh; --size: 4px; --duration: 7s;"></div>
+                <div class="particle" style="--x: 20vw; --y: 40vh; --size: 3px; --duration: 9s;"></div>
+                <div class="particle" style="--x: 70vw; --y: 30vh; --size: 6px; --duration: 11s;"></div>
+                <div class="particle" style="--x: 50vw; --y: 80vh; --size: 4px; --duration: 8s;"></div>
+                <div class="particle" style="--x: 15vw; --y: 85vh; --size: 3px; --duration: 6s;"></div>
+            </div>
         </div>
-    </footer>
+    </div>
 
-    <script src="js/main.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>

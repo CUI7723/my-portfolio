@@ -1,19 +1,20 @@
-// ==================== 状态管理 ====================
+// ==================== 全局变量和状态 ====================
 const State = {
-    currentScene: 'chair', // 'chair', 'transition', 'main'
-    isAnimating: false
+    isNavScrolled: false,
+    currentSection: 'hero',
+    formSubmitted: false
 };
 
-// ==================== 场景元素 ====================
-const scenes = {
-    chair: document.getElementById('chair-scene'),
-    transition: document.getElementById('transition-scene'),
-    main: document.getElementById('main-scene')
+// ==================== DOM 元素 ====================
+const elements = {
+    navbar: document.querySelector('.navbar'),
+    navLinks: document.querySelectorAll('.nav-link'),
+    sections: document.querySelectorAll('section'),
+    fadeElements: document.querySelectorAll('.fade-in'),
+    contactForm: document.querySelector('.contact-form'),
+    projectCards: document.querySelectorAll('.project-card'),
+    skillItems: document.querySelectorAll('.skill-item')
 };
-
-const questionText = document.getElementById('question-text');
-const sitPrompt = document.querySelector('.sit-prompt');
-const floatingCards = document.querySelectorAll('.floating-card');
 
 // ==================== 初始化 ====================
 document.addEventListener('DOMContentLoaded', () => {
@@ -21,330 +22,433 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initializeApp() {
-    // 绑定"坐下来"点击事件
-    sitPrompt.addEventListener('click', handleSitDown);
+    initializeNavigation();
+    initializeScrollAnimations();
+    initializeInteractions();
+    initializeForm();
+    initializeSmoothScroll();
+    initializeParallax();
     
-    // 初始化漂浮卡片的交互效果
-    initializeFloatingCards();
-    
-    // 开始环境粒子动画
-    startAmbientAnimation();
-    
-    console.log('🎨 Portfolio initialized');
+    console.log('🎨 Redesigned Portfolio initialized');
 }
 
-// ==================== "坐下来"交互 ====================
-function handleSitDown() {
-    if (State.isAnimating) return;
-    State.isAnimating = true;
-    
-    // 隐藏椅子场景
-    scenes.chair.classList.remove('active');
-    
-    // 显示转换动画场景
-    scenes.transition.classList.add('active');
-    
-    // 播放坐下音效（可选，这里用视觉代替）
-    playSittingSound();
-    
-    // 模拟坐下过程
-    setTimeout(() => {
-        // 隐藏转换场景
-        scenes.transition.classList.remove('active');
-        
-        // 显示主场景
-        scenes.main.classList.add('active');
-        State.currentScene = 'main';
-        
-        // 开始主场景动画
-        startMainSceneAnimation();
-        
-        State.isAnimating = false;
-    }, 1500); // 1.5秒的转换动画
-}
+// ==================== 导航栏功能 ====================
+function initializeNavigation() {
+    // 滚动监听
+    window.addEventListener('scroll', throttle(() => {
+        handleNavbarScroll();
+        updateActiveSection();
+    }, 100));
 
-function playSittingSound() {
-    // 这里可以添加音效，暂时留空
-    // 视觉上已经通过CSS动画模拟了
-}
-
-// ==================== 主场景动画 ====================
-function startMainSceneAnimation() {
-    // 打字机效果显示"你想知道什么"
-    typeWriterEffect("你想知道什么");
-    
-    // 漂浮卡片进入
-    floatingCards.forEach((card, index) => {
-        const delay = index * 0.5;
-        card.style.animationDelay = `${delay}s`;
-        
-        // 添加持续漂浮动画
-        startFloatingAnimation(card, index);
+    // 导航链接点击
+    elements.navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href');
+            const targetSection = document.querySelector(targetId);
+            
+            if (targetSection) {
+                const offsetTop = targetSection.offsetTop - 80;
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
+                });
+            }
+        });
     });
-    
-    // 开始环境光晕效果
-    startCursorGlow();
 }
 
-// ==================== 打字机效果 ====================
-function typeWriterEffect(text) {
-    let index = 0;
-    const speed = 150; // 打字速度（毫秒）
+function handleNavbarScroll() {
+    const scrollTop = window.scrollY;
     
-    function type() {
-        if (index < text.length) {
-            questionText.textContent += text.charAt(index);
-            index++;
-            setTimeout(type, speed);
+    if (scrollTop > 50 && !State.isNavScrolled) {
+        elements.navbar.classList.add('scrolled');
+        State.isNavScrolled = true;
+    } else if (scrollTop <= 50 && State.isNavScrolled) {
+        elements.navbar.classList.remove('scrolled');
+        State.isNavScrolled = false;
+    }
+}
+
+function updateActiveSection() {
+    const scrollPosition = window.scrollY + 100;
+    
+    elements.sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.offsetHeight;
+        const sectionId = section.getAttribute('id');
+        
+        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+            if (State.currentSection !== sectionId) {
+                State.currentSection = sectionId;
+                updateNavLink(sectionId);
+            }
+        }
+    });
+}
+
+function updateNavLink(activeId) {
+    elements.navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${activeId}`) {
+            link.classList.add('active');
+        }
+    });
+}
+
+// ==================== 滚动动画 ====================
+function initializeScrollAnimations() {
+    // 初始检查
+    checkFadeElements();
+    
+    // 滚动监听
+    window.addEventListener('scroll', throttle(checkFadeElements, 100));
+    
+    // 为所有section添加fade-in类
+    document.querySelectorAll('section > .container > *, section > *').forEach(el => {
+        if (!el.classList.contains('fade-in')) {
+            el.classList.add('fade-in');
+        }
+    });
+}
+
+function checkFadeElements() {
+    const triggerBottom = window.innerHeight * 0.85;
+    
+    document.querySelectorAll('.fade-in').forEach(element => {
+        const elementTop = element.getBoundingClientRect().top;
+        
+        if (elementTop < triggerBottom) {
+            element.classList.add('visible');
+        }
+    });
+}
+
+// ==================== 交互效果 ====================
+function initializeInteractions() {
+    // 项目卡片交互
+    elements.projectCards.forEach((card, index) => {
+        // 悬停效果
+        card.addEventListener('mouseenter', () => {
+            card.style.transform = 'translateY(-8px) scale(1.02)';
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = '';
+        });
+        
+        // 点击效果
+        card.addEventListener('click', () => {
+            createRipple(card);
+            // 这里可以添加打开项目详情的功能
+        });
+        
+        // 设置动画延迟
+        card.style.transitionDelay = `${index * 0.1}s`;
+    });
+
+    // 技能项目交互
+    elements.skillItems.forEach(skill => {
+        skill.addEventListener('mouseenter', () => {
+            const icon = skill.querySelector('.skill-icon');
+            icon.style.transform = 'scale(1.2) rotate(10deg)';
+        });
+        
+        skill.addEventListener('mouseleave', () => {
+            const icon = skill.querySelector('.skill-icon');
+            icon.style.transform = '';
+        });
+    });
+
+    // 按钮交互
+    document.querySelectorAll('.btn').forEach(btn => {
+        btn.addEventListener('mouseenter', () => {
+            createGlowEffect(btn);
+        });
+        
+        btn.addEventListener('mouseleave', () => {
+            removeGlowEffect(btn);
+        });
+    });
+}
+
+// ==================== 表单功能 ====================
+function initializeForm() {
+    if (!elements.contactForm) return;
+
+    const form = elements.contactForm;
+    const inputs = form.querySelectorAll('input, textarea');
+
+    // 输入框焦点效果
+    inputs.forEach(input => {
+        input.addEventListener('focus', () => {
+            input.parentElement.classList.add('focused');
+        });
+        
+        input.addEventListener('blur', () => {
+            input.parentElement.classList.remove('focused');
+        });
+
+        // 实时验证
+        input.addEventListener('input', () => {
+            validateInput(input);
+        });
+    });
+
+    // 表单提交
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        if (validateForm()) {
+            submitForm(form);
+        }
+    });
+}
+
+function validateInput(input) {
+    const value = input.value.trim();
+    const type = input.type;
+    
+    // 移除之前的错误状态
+    input.classList.remove('error');
+    removeErrorMessage(input);
+    
+    // 基础验证
+    if (value === '') {
+        return true; // 空值在提交时验证
+    }
+    
+    // 邮箱验证
+    if (type === 'email') {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+            showErrorMessage(input, '请输入有效的邮箱地址');
+            input.classList.add('error');
+            return false;
         }
     }
     
-    type();
+    return true;
 }
 
-// ==================== 漂浮卡片动画 ====================
-function startFloatingAnimation(card, index) {
-    let time = 0;
-    const baseX = parseFloat(getComputedStyle(card).getPropertyValue('--x'));
-    const baseY = parseFloat(getComputedStyle(card).getPropertyValue('--y'));
+function validateForm() {
+    const inputs = elements.contactForm.querySelectorAll('input, textarea');
+    let isValid = true;
     
-    function animate() {
-        if (State.currentScene !== 'main') return;
+    inputs.forEach(input => {
+        const value = input.value.trim();
         
-        time += 0.01;
-        
-        // 每个卡片有不同的漂浮参数
-        const amplitude = 10 + (index % 3) * 5; // 振幅
-        const speed = 0.5 + (index % 2) * 0.3; // 速度
-        
-        const offsetX = Math.sin(time * speed) * amplitude;
-        const offsetY = Math.cos(time * speed * 0.7) * amplitude;
-        
-        const currentX = baseX + offsetX;
-        const currentY = baseY + offsetY;
-        
-        card.style.setProperty('--x', `${currentX}px`);
-        card.style.setProperty('--y', `${currentY}px`);
-        
-        requestAnimationFrame(animate);
-    }
-    
-    animate();
-}
-
-// ==================== 卡片交互效果 ====================
-function initializeFloatingCards() {
-    floatingCards.forEach((card, index) => {
-        // 鼠标移入：暂停漂浮，放大，高亮
-        card.addEventListener('mouseenter', () => {
-            card.style.animationPlayState = 'paused';
-            card.style.zIndex = '100';
-        });
-        
-        // 鼠标移出：恢复漂浮
-        card.addEventListener('mouseleave', () => {
-            card.style.animationPlayState = 'running';
-            card.style.zIndex = '10';
-        });
-        
-        // 鼠标跟随效果
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            // 卡片3D倾斜效果
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            const rotateX = (y - centerY) / 10;
-            const rotateY = (centerX - x) / 10;
-            
-            card.style.transform = `
-                translate(var(--x), var(--y)) 
-                scale(1.05) 
-                perspective(1000px) 
-                rotateX(${rotateX}deg) 
-                rotateY(${rotateY}deg)
-            `;
-        });
-        
-        // 点击卡片时的反馈
-        card.addEventListener('click', () => {
-            // 创建点击波纹效果
-            createRipple(card);
-            
-            // 添加一个"弹跳"效果
-            card.style.transform = `
-                translate(var(--x), var(--y)) 
-                scale(0.95)
-            `;
-            
-            setTimeout(() => {
-                card.style.transform = `
-                    translate(var(--x), var(--y)) 
-                    scale(1.05)
-                `;
-            }, 150);
-        });
+        if (value === '') {
+            showErrorMessage(input, '此字段不能为空');
+            input.classList.add('error');
+            isValid = false;
+        } else {
+            isValid = validateInput(input) && isValid;
+        }
     });
+    
+    return isValid;
 }
 
-// ==================== 点击波纹效果 ====================
-function createRipple(card) {
-    const ripple = document.createElement('div');
-    ripple.style.cssText = `
-        position: absolute;
-        width: 100px;
-        height: 100px;
-        background: radial-gradient(circle, rgba(102, 126, 234, 0.4) 0%, transparent 70%);
-        border-radius: 50%;
-        pointer-events: none;
-        transform: translate(-50%, -50%) scale(0);
-        animation: ripple-expand 0.6s ease-out forwards;
-    `;
+function showErrorMessage(input, message) {
+    // 移除现有的错误消息
+    removeErrorMessage(input);
     
-    card.appendChild(ripple);
+    // 创建新的错误消息
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = message;
     
+    input.parentElement.appendChild(errorDiv);
+    
+    // 添加样式（如果还没有）
+    if (!document.querySelector('#error-styles')) {
+        const style = document.createElement('style');
+        style.id = 'error-styles';
+        style.textContent = `
+            .error-message {
+                color: #FF6B35;
+                font-size: 0.875rem;
+                margin-top: 8px;
+                animation: slideDown 0.3s ease;
+            }
+            
+            input.error, textarea.error {
+                border-color: #FF6B35 !important;
+            }
+            
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+function removeErrorMessage(input) {
+    const errorDiv = input.parentElement.querySelector('.error-message');
+    if (errorDiv) {
+        errorDiv.remove();
+    }
+}
+
+function submitForm(form) {
+    if (State.formSubmitted) return;
+    
+    const btn = form.querySelector('button[type="submit"]');
+    const originalText = btn.textContent;
+    
+    btn.disabled = true;
+    btn.textContent = '发送中...';
+    
+    // 模拟表单提交
     setTimeout(() => {
-        ripple.remove();
-    }, 600);
-}
-
-// 添加波纹动画
-const rippleStyle = document.createElement('style');
-rippleStyle.textContent = `
-    @keyframes ripple-expand {
-        0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
-        100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
-    }
-`;
-document.head.appendChild(rippleStyle);
-
-// ==================== 鼠标光晕效果 ====================
-let cursorGlow;
-let mouseX = 0;
-let mouseY = 0;
-
-function startCursorGlow() {
-    // 创建鼠标跟随光晕
-    cursorGlow = document.createElement('div');
-    cursorGlow.className = 'cursor-glow-main';
-    cursorGlow.style.cssText = `
-        position: fixed;
-        width: 60px;
-        height: 60px;
-        background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
-        border-radius: 50%;
-        pointer-events: none;
-        transform: translate(-50%, -50%);
-        z-index: 9999;
-        opacity: 0;
-        transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease;
-    `;
-    document.body.appendChild(cursorGlow);
-    
-    // 鼠标移动跟踪
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-    });
-    
-    // 鼠标进入文档
-    document.addEventListener('mouseenter', () => {
-        cursorGlow.style.opacity = '0.5';
-    }, true);
-    
-    // 鼠标离开文档
-    document.addEventListener('mouseleave', () => {
-        cursorGlow.style.opacity = '0';
-    }, true);
-    
-    // 动画循环
-    animateGlow();
-}
-
-function animateGlow() {
-    if (cursorGlow) {
-        let glowX = parseFloat(cursorGlow.style.left) || 0;
-        let glowY = parseFloat(cursorGlow.style.top) || 0;
+        btn.textContent = '发送成功！';
+        btn.style.background = 'linear-gradient(135deg, #00D9A3 0%, #00B686 100%)';
         
-        // 平滑跟随
-        glowX += (mouseX - glowX) * 0.15;
-        glowY += (mouseY - glowY) * 0.15;
+        // 重置表单
+        form.reset();
+        State.formSubmitted = true;
         
-        cursorGlow.style.left = `${glowX}px`;
-        cursorGlow.style.top = `${glowY}px`;
-    }
-    
-    requestAnimationFrame(animateGlow);
-}
-
-// ==================== 环境动画 ====================
-function startAmbientAnimation() {
-    // 背景渐变动画
-    let hue = 230;
-    const body = document.body;
-    
-    setInterval(() => {
-        hue = (hue + 0.1) % 360;
-        body.style.background = `linear-gradient(135deg, hsl(${hue}, 70%, 60%) 0%, hsl(${hue + 30}, 70%, 60%) 100%)`;
-    }, 50);
-}
-
-// ==================== 技能标签点击效果 ====================
-const skillTags = document.querySelectorAll('.skill-tag');
-skillTags.forEach(tag => {
-    tag.addEventListener('click', function() {
-        // 创建弹跳效果
-        this.style.transition = 'transform 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-        this.style.transform = 'translateY(-10px) scale(1.2)';
-        
-        // 随机改变颜色
-        const colors = ['#FF6B35', '#667eea', '#764ba2', '#FFD93D', '#00D9A3'];
-        const randomColor = colors[Math.floor(Math.random() * colors.length)];
-        this.style.background = randomColor;
-        
+        // 3秒后恢复按钮
         setTimeout(() => {
-            this.style.transform = 'translateY(0) scale(1)';
-        }, 200);
-    });
-});
-
-// ==================== 联系链接悬停效果 ====================
-const contactLinks = document.querySelectorAll('.contact-link');
-contactLinks.forEach(link => {
-    link.addEventListener('mouseenter', function() {
-        // 创建一个"飘出"的效果
-        this.style.transition = 'all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-        this.style.transform = 'translateY(-5px) scale(1.05)';
+            btn.disabled = false;
+            btn.textContent = originalText;
+            btn.style.background = '';
+            State.formSubmitted = false;
+        }, 3000);
         
-        // 添加闪烁效果
-        const icon = this.querySelector('span');
-        icon.style.animation = 'icon-shake 0.5s ease infinite';
-    });
+        // 显示成功消息
+        showSuccessMessage();
+    }, 1500);
+}
+
+function showSuccessMessage() {
+    // 创建成功提示
+    const successDiv = document.createElement('div');
+    successDiv.className = 'success-toast';
+    successDiv.innerHTML = `
+        <div class="success-icon">✓</div>
+        <div class="success-text">消息已发送，我会尽快回复！</div>
+    `;
     
-    link.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0) scale(1)';
-        
-        // 停止闪烁
-        const icon = this.querySelector('span');
-        icon.style.animation = '';
-    });
-});
-
-// 添加图标摇晃动画
-const iconStyle = document.createElement('style');
-iconStyle.textContent = `
-    @keyframes icon-shake {
-        0%, 100% { transform: rotate(0deg); }
-        25% { transform: rotate(-10deg); }
-        75% { transform: rotate(10deg); }
+    // 添加样式
+    if (!document.querySelector('#toast-styles')) {
+        const style = document.createElement('style');
+        style.id = 'toast-styles';
+        style.textContent = `
+            .success-toast {
+                position: fixed;
+                top: 100px;
+                right: 24px;
+                background: white;
+                padding: 20px 24px;
+                border-radius: 12px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                z-index: 9999;
+                animation: slideInRight 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
+            }
+            
+            .success-icon {
+                width: 32px;
+                height: 32px;
+                background: linear-gradient(135deg, #00D9A3 0%, #00B686 100%);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-weight: bold;
+            }
+            
+            .success-text {
+                color: var(--text-primary);
+                font-weight: 500;
+            }
+            
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
     }
-`;
-document.head.appendChild(iconStyle);
+    
+    document.body.appendChild(successDiv);
+    
+    // 5秒后移除
+    setTimeout(() => {
+        successDiv.remove();
+    }, 5000);
+}
 
-// ==================== 性能优化 ====================
-// 使用节流函数优化鼠标移动事件
+// ==================== 平滑滚动 ====================
+function initializeSmoothScroll() {
+    // 为所有锚定链接添加平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            
+            if (targetElement) {
+                const offsetTop = targetElement.offsetTop - 80;
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+}
+
+// ==================== 视差效果 ====================
+function initializeParallax() {
+    // 为英雄区域的形状添加视差效果
+    const shapes = document.querySelectorAll('.shape');
+    
+    window.addEventListener('mousemove', (e) => {
+        const mouseX = e.clientX / window.innerWidth - 0.5;
+        const mouseY = e.clientY / window.innerHeight - 0.5;
+        
+        shapes.forEach((shape, index) => {
+            const speed = (index + 1) * 20;
+            const x = mouseX * speed;
+            const y = mouseY * speed;
+            
+            shape.style.transform = `translate(${x}px, ${y}px)`;
+        });
+    });
+}
+
+// ==================== 辅助函数 ====================
+
+// 节流函数
 function throttle(func, limit) {
     let inThrottle;
     return function() {
@@ -358,27 +462,86 @@ function throttle(func, limit) {
     };
 }
 
-// 节流鼠标移动事件
-document.addEventListener('mousemove', throttle((e) => {
-    // 这里可以添加其他需要节流的鼠标事件处理
-}, 50));
+// 创建波纹效果
+function createRipple(element) {
+    const ripple = document.createElement('div');
+    ripple.className = 'ripple';
+    
+    const rect = element.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const x = event.clientX - rect.left - size / 2;
+    const y = event.clientY - rect.top - size / 2;
+    
+    ripple.style.width = ripple.style.height = `${size}px`;
+    ripple.style.left = `${x}px`;
+    ripple.style.top = `${y}px`;
+    
+    element.appendChild(ripple);
+    
+    // 动画完成后移除
+    setTimeout(() => {
+        ripple.remove();
+    }, 600);
+    
+    // 添加波纹动画样式
+    if (!document.querySelector('#ripple-styles')) {
+        const style = document.createElement('style');
+        style.id = 'ripple-styles';
+        style.textContent = `
+            .ripple {
+                position: absolute;
+                background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+                border-radius: 50%;
+                transform: scale(0);
+                animation: ripple-animation 0.6s ease-out;
+                pointer-events: none;
+            }
+            
+            @keyframes ripple-animation {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
 
-// ==================== 页面可见性检测 ====================
+// 创建发光效果
+function createGlowEffect(element) {
+    element.style.boxShadow = '0 8px 24px rgba(22, 93, 255, 0.3)';
+}
+
+function removeGlowEffect(element) {
+    element.style.boxShadow = '';
+}
+
+// ==================== 页面可见性 ====================
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
-        // 页面隐藏时，暂停动画
-        if (cursorGlow) {
-            cursorGlow.style.opacity = '0';
-        }
+        console.log('Page hidden - pausing animations');
+        // 可以在这里暂停一些动画
     } else {
-        // 页面显示时，恢复动画
-        if (cursorGlow && State.currentScene === 'main') {
-            cursorGlow.style.opacity = '0.5';
-        }
+        console.log('Page visible - resuming animations');
+        // 可以在这里恢复动画
     }
 });
 
-// ==================== 控制台彩蛋 ====================
-console.log('%c🎨 CUI XP Portfolio', 'font-size: 24px; font-weight: bold; color: #FF6B35;');
-console.log('%c✨ Interactive Experience', 'font-size: 14px; color: #667eea;');
-console.log('%c💡 提示：点击"坐下来"开始探索', 'font-size: 12px; color: #86868B;');
+// ==================== 加载完成 ====================
+window.addEventListener('load', () => {
+    // 确保所有元素都已加载
+    setTimeout(() => {
+        checkFadeElements();
+    }, 100);
+});
+
+// ==================== 控制台信息 ====================
+console.log('%c🎨 CUI XP Redesigned Portfolio', 'font-size: 24px; font-weight: bold; color: #165DFF;');
+console.log('%c✨ Modern Interactive Experience', 'font-size: 14px; color: #7B61FF;');
+console.log('%c💡 Features:', 'font-size: 12px; color: #86868B;');
+console.log('   • Smooth scrolling navigation');
+console.log('   • Fade-in scroll animations');
+console.log('   • Interactive cards with hover effects');
+console.log('   • Form validation and submission');
+console.log('   • Parallax effects in hero section');

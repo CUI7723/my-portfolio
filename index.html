@@ -1,260 +1,102 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CUI XP - 产品设计师</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="CUI7723 Designer & Artist Portfolio">
+  <title>CUI7723 — Designer / Artist</title>
+  <link rel="icon" href="assets/favicon.ico">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- 导航栏 -->
+  <header class="header">
     <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <span class="logo-text">CUI XP</span>
-            </div>
-            <ul class="nav-links">
-                <li><a href="#about" class="nav-link">关于我</a></li>
-                <li><a href="#projects" class="nav-link">项目作品</a></li>
-                <li><a href="#skills" class="nav-link">技能清单</a></li>
-                <li><a href="#contact" class="nav-link">联系我</a></li>
-            </ul>
-        </div>
+      <a href="#" class="brand">
+        <img src="assets/logo.svg" alt="CUI7723 Logo" width="44" height="44">
+      </a>
+      <ul class="nav-links">
+        <li><a href="#work" data-scroll>Work</a></li>
+        <li><a href="#about" data-scroll>About</a></li>
+        <li><a href="#contact" data-scroll>Contact</a></li>
+      </ul>
+      <button class="menu-btn" aria-label="Open Menu">
+        <span></span>
+        <span></span>
+      </button>
     </nav>
-
-    <!-- 英雄区 -->
+    <!-- 全屏菜单 -->
+    <div class="menu-overlay">
+      <nav class="menu-mobile">
+        <a href="#work" class="mobile-link" data-scroll>Work</a>
+        <a href="#about" class="mobile-link" data-scroll>About</a>
+        <a href="#contact" class="mobile-link" data-scroll>Contact</a>
+      </nav>
+    </div>
+  </header>
+  <main>
     <section class="hero">
-        <div class="hero-content">
-            <div class="hero-text-container">
-                <div class="hero-badge">
-                    <span class="badge-text">产品设计师</span>
-                </div>
-                <h1 class="hero-title">设计改变体验</h1>
-                <p class="hero-subtitle">从问题到方案 每一步都为用户考虑</p>
-                <div class="hero-cta">
-                    <a href="#projects" class="btn primary">查看作品</a>
-                    <a href="#contact" class="btn secondary">联系我</a>
-                </div>
-            </div>
-        </div>
-        <div class="hero-decoration">
-            <div class="decoration-circle circle-1"></div>
-            <div class="decoration-circle circle-2"></div>
-            <div class="decoration-circle circle-3"></div>
-        </div>
+      <div class="hero-inner">
+        <h1 class="hero-title">CUI7723</h1>
+        <span class="hero-desc">Designer & Artist</span>
+      </div>
+      <div class="scroll-indicator"></div>
     </section>
-
-    <!-- 关于我 -->
-    <section class="about" id="about">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">关于我</h2>
-                <div class="section-divider"></div>
-            </div>
-            <div class="about-content">
-                <div class="about-text">
-                    <p class="about-description">我是一名拥有3年经验的产品设计师，专注于构建高性能、可维护的Web应用。擅长React生态系统，热衷于用户体验优化和性能调优。目前寻找产品设计师职位。</p>
-                </div>
-                <div class="about-stats">
-                    <div class="stat-item">
-                        <span class="stat-number">3+</span>
-                        <span class="stat-label">年专业经验</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">10+</span>
-                        <span class="stat-label">完成项目</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">50+</span>
-                        <span class="stat-label">满意客户</span>
-                    </div>
-                </div>
-            </div>
+    <section id="work" class="section work-section">
+      <div class="section-title-outer">
+        <h2 class="section-title reveal-on-scroll">Selected Work</h2>
+      </div>
+      <div class="works-list">
+        <div class="work-card reveal-on-scroll">
+          <div class="work-img-wrap">
+            <img src="assets/work1.jpg" alt="Work 1">
+          </div>
+          <div class="work-meta">
+            <div class="work-title">品牌系统 / 2025</div>
+          </div>
         </div>
+        <div class="work-card reveal-on-scroll">
+          <div class="work-img-wrap">
+            <img src="assets/work2.jpg" alt="Work 2">
+          </div>
+          <div class="work-meta">
+            <div class="work-title">空间视觉 / 2025</div>
+          </div>
+        </div>
+        <div class="work-card reveal-on-scroll">
+          <div class="work-img-wrap">
+            <img src="assets/work3.jpg" alt="Work 3">
+          </div>
+          <div class="work-meta">
+            <div class="work-title">插画创作 / 2026</div>
+          </div>
+        </div>
+      </div>
     </section>
-
-    <!-- 精选项目 -->
-    <section class="projects" id="projects">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">精选项目</h2>
-                <div class="section-divider"></div>
-            </div>
-            <div class="projects-grid">
-                <!-- 项目1 -->
-                <div class="project-card">
-                    <div class="project-visual">
-                        <img src="images/JGXFJQR.jpg" alt="森林激光消防装备" class="project-image">
-                    </div>
-                    <div class="project-info">
-                        <h3 class="project-title">森林激光消防装备</h3>
-                        <p class="project-description">使用高能激光破环燃烧链式反应达到消防目的</p>
-                        <div class="project-tags">
-                            <span class="tag">React</span>
-                            <span class="tag">Next.js</span>
-                            <span class="tag">TypeScript</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 项目2 -->
-                <div class="project-card">
-                    <div class="project-visual">
-                        <img src="images/LHSGJ.jpg" alt="无人联合收割与回收装备" class="project-image">
-                    </div>
-                    <div class="project-info">
-                        <h3 class="project-title">无人联合收割与回收装备</h3>
-                        <p class="project-description">将收割的农作物颗粒化处理再压缩为矩形排出</p>
-                        <div class="project-tags">
-                            <span class="tag">Vue.js</span>
-                            <span class="tag">ECharts</span>
-                            <span class="tag">WebSocket</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 项目3 -->
-                <div class="project-card">
-                    <div class="project-visual">
-                        <img src="images/XFWRJ.jpg" alt="联动式消防无人机" class="project-image">
-                    </div>
-                    <div class="project-info">
-                        <h3 class="project-title">联动式消防无人机</h3>
-                        <p class="project-description">以移动消防车为基础将高压水管与无人机衔接应对高层火灾</p>
-                        <div class="project-tags">
-                            <span class="tag">React</span>
-                            <span class="tag">Storybook</span>
-                            <span class="tag">Jest</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <section id="about" class="section about-section">
+      <div class="section-title-outer">
+        <h2 class="section-title reveal-on-scroll">About</h2>
+      </div>
+      <div class="about-content reveal-on-scroll">
+        注重秩序与细节，热爱极简主义。作品专注于空间、设计与艺术的结合，期待与您共创极致体验。
+      </div>
     </section>
-
-    <!-- 技能清单 -->
-    <section class="skills" id="skills">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">技能清单</h2>
-                <div class="section-divider"></div>
-            </div>
-            <div class="skills-container">
-                <!-- 前端核心 -->
-                <div class="skill-section">
-                    <h3 class="skill-category-title">前端核心</h3>
-                    <div class="skill-list">
-                        <div class="skill-item">
-                            <span class="skill-name">React</span>
-                        </div>
-                        <div class="skill-item">
-                            <span class="skill-name">Vue.js</span>
-                        </div>
-                        <div class="skill-item">
-                            <span class="skill-name">TypeScript</span>
-                        </div>
-                        <div class="skill-item">
-                            <span class="skill-name">JavaScript</span>
-                        </div>
-                        <div class="skill-item">
-                            <span class="skill-name">HTML5/CSS3</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 工具链 -->
-                <div class="skill-section">
-                    <h3 class="skill-category-title">工具链</h3>
-                    <div class="skill-list">
-                        <div class="skill-item">
-                            <span class="skill-name">Git</span>
-                        </div>
-                        <div class="skill-item">
-                            <span class="skill-name">Webpack</span>
-                        </div>
-                        <div class="skill-item">
-                            <span class="skill-name">Vite</span>
-                        </div>
-                        <div class="skill-item">
-                            <span class="skill-name">ESLint</span>
-                        </div>
-                        <div class="skill-item">
-                            <span class="skill-name">Prettier</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 其他 -->
-                <div class="skill-section">
-                    <h3 class="skill-category-title">其他</h3>
-                    <div class="skill-list">
-                        <div class="skill-item">
-                            <span class="skill-name">Node.js</span>
-                        </div>
-                        <div class="skill-item">
-                            <span class="skill-name">RESTful API</span>
-                        </div>
-                        <div class="skill-item">
-                            <span class="skill-name">性能优化</span>
-                        </div>
-                        <div class="skill-item">
-                            <span class="skill-name">响应式设计</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <section id="contact" class="section contact-section">
+      <div class="section-title-outer">
+        <h2 class="section-title reveal-on-scroll">Contact</h2>
+      </div>
+      <div class="contact-content reveal-on-scroll">
+        <a href="mailto:your@email.com" class="contact-email">your@email.com</a>
+        <div class="contact-socials">
+          <a href="https://behance.net/" target="_blank" rel="noopener">Behance</a>
+          <a href="https://instagram.com/" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://linkedin.com/" target="_blank" rel="noopener">LinkedIn</a>
         </div>
+      </div>
     </section>
-
-    <!-- 联系我 -->
-    <section class="contact" id="contact">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">联系我</h2>
-                <div class="section-divider"></div>
-            </div>
-            <div class="contact-content">
-                <p class="contact-description">期待与您交流合作机会</p>
-                <div class="contact-methods">
-                    <a href="mailto:1821083035@qq.com" class="contact-link">
-                        <div class="contact-icon">📧</div>
-                        <span class="contact-text">1821083035@qq.com</span>
-                    </a>
-                    <a href="https://github.com/CUI%20XP" class="contact-link">
-                        <div class="contact-icon">🐱</div>
-                        <span class="contact-text">GitHub</span>
-                    </a>
-                    <a href="https://linkedin.com/in/CUI%20XP" class="contact-link">
-                        <div class="contact-icon">💼</div>
-                        <span class="contact-text">LinkedIn</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 页脚 -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-info">
-                    <h3>CUI XP</h3>
-                    <p>产品设计师</p>
-                </div>
-                <div class="footer-links">
-                    <a href="#about" class="footer-link">关于我</a>
-                    <a href="#projects" class="footer-link">项目作品</a>
-                    <a href="#skills" class="footer-link">技能清单</a>
-                    <a href="#contact" class="footer-link">联系我</a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 CUI XP. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <script src="main.js"></script>
+  </main>
+  <footer class="footer">
+    <div>&copy; 2026 CUI7723</div>
+  </footer>
+  <script src="script.js"></script>
 </body>
 </html>

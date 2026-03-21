@@ -8,16 +8,6 @@ document.querySelectorAll('.menu-overlay a').forEach(link=>{
   });
 });
 
-// 导航栏滚动效果
-window.addEventListener('scroll', function() {
-  const header = document.querySelector('.header');
-  if (window.scrollY > 50) {
-    header.classList.add('scrolled');
-  } else {
-    header.classList.remove('scrolled');
-  }
-});
-
 // 平滑滚动（兼容菜单与锚点）
 function smoothScroll(event) {
   const href = this.getAttribute('href');
@@ -29,18 +19,6 @@ function smoothScroll(event) {
     }
   }
 }
-document.querySelectorAll('[data-scroll]').forEach(a=>{
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
   a.addEventListener('click', smoothScroll);
 });
-
-// section/Works reveal 动画（滚动进入时浮现）
-function revealOnScroll(){
-  const nodes = document.querySelectorAll('.reveal-on-scroll, .work-card');
-  const windowHeight = window.innerHeight;
-  nodes.forEach(node=>{
-    const rect = node.getBoundingClientRect();
-    if(rect.top < windowHeight - 80) node.classList.add('visible','active');
-  });
-}
-window.addEventListener('scroll', revealOnScroll);
-window.addEventListener('DOMContentLoaded', () => { setTimeout(revealOnScroll, 90); });

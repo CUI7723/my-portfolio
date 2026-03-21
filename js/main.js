@@ -8,6 +8,16 @@ document.querySelectorAll('.menu-overlay a').forEach(link=>{
   });
 });
 
+// 导航栏滚动效果
+window.addEventListener('scroll', function() {
+  const header = document.querySelector('.header');
+  if (window.scrollY > 50) {
+    header.classList.add('scrolled');
+  } else {
+    header.classList.remove('scrolled');
+  }
+});
+
 // 平滑滚动（兼容菜单与锚点）
 function smoothScroll(event) {
   const href = this.getAttribute('href');

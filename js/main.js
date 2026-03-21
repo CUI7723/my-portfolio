@@ -22,3 +22,26 @@ function smoothScroll(event) {
 document.querySelectorAll('a[href^="#"]').forEach(a=>{
   a.addEventListener('click', smoothScroll);
 });
+
+// Works section scroll animation
+window.addEventListener('scroll', function() {
+  const worksSection = document.querySelector('.works');
+  if (worksSection) {
+    const rect = worksSection.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+    
+    // Calculate scroll position relative to works section
+    const scrollPosition = window.scrollY - rect.top;
+    
+    // Reset classes
+    worksSection.classList.remove('scrolled', 'scrolled-more');
+    
+    // Add classes based on scroll position
+    if (scrollPosition > windowHeight * 0.5) {
+      worksSection.classList.add('scrolled');
+    }
+    if (scrollPosition > windowHeight * 1.5) {
+      worksSection.classList.add('scrolled-more');
+    }
+  }
+});

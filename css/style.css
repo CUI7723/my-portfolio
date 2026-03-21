@@ -317,6 +317,64 @@ a {
   color: var(--gray);
 }
 
+/* Works section with scroll animation */
+.works {
+  position: relative;
+  height: 300vh;
+  overflow: hidden;
+}
+
+.work-item {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.5s ease;
+}
+
+.work-item img {
+  max-width: 80%;
+  max-height: 80vh;
+  object-fit: cover;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+/* Scroll animation */
+.work-item:nth-child(1) {
+  z-index: 3;
+}
+
+.work-item:nth-child(2) {
+  z-index: 2;
+}
+
+.work-item:nth-child(3) {
+  z-index: 1;
+}
+
+/* When scrolling, first image shrinks and fades, second appears, etc. */
+.works.scrolled .work-item:nth-child(1) img {
+  transform: scale(0.8);
+  opacity: 0.5;
+}
+
+.works.scrolled .work-item:nth-child(2) img {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.works.scrolled-more .work-item:nth-child(2) img {
+  transform: scale(0.8);
+  opacity: 0.5;
+}
+
+.works.scrolled-more .work-item:nth-child(3) img {
+  transform: scale(1);
+  opacity: 1;
+}
+
 @media (max-width: 992px) {
   .nav-links {
     display: none;

@@ -23,25 +23,22 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
   a.addEventListener('click', smoothScroll);
 });
 
-// Works section scroll animation
-window.addEventListener('scroll', function() {
-  const worksSection = document.querySelector('.works');
-  if (worksSection) {
-    const rect = worksSection.getBoundingClientRect();
-    const windowHeight = window.innerHeight;
-    
-    // Calculate scroll position relative to works section
-    const scrollPosition = window.scrollY - rect.top;
-    
-    // Reset classes
-    worksSection.classList.remove('scrolled', 'scrolled-more');
-    
-    // Add classes based on scroll position
-    if (scrollPosition > windowHeight * 0.5) {
-      worksSection.classList.add('scrolled');
+// Scroll reveal animation
+function checkReveal() {
+  const reveals = document.querySelectorAll('.reveal-on-scroll');
+  const windowHeight = window.innerHeight;
+  const revealPoint = 150;
+  
+  reveals.forEach(element => {
+    const revealTop = element.getBoundingClientRect().top;
+    if (revealTop < windowHeight - revealPoint) {
+      element.classList.add('revealed');
     }
-    if (scrollPosition > windowHeight * 1.5) {
-      worksSection.classList.add('scrolled-more');
-    }
-  }
-});
+  });
+}
+
+// Initial check
+checkReveal();
+
+// Check on scroll
+window.addEventListener('scroll', checkReveal);

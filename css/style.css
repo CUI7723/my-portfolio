@@ -381,14 +381,15 @@ a {
 
 /* Work section */
 .work-section {
-  margin: 100px 0;
+  margin: 120px 0;
+  padding: 0 20px;
 }
 
 .works-list {
   display: flex;
   flex-direction: column;
-  gap: 100px;
-  max-width: 900px;
+  gap: 80px;
+  max-width: 800px;
   margin: 0 auto;
 }
 

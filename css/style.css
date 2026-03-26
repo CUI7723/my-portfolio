@@ -3,9 +3,12 @@
   --light: #000000;
   --gray: #888888;
   --light-gray: #1a1a1a;
+  --accent: #f0f0f0;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Arial", sans-serif;
   --nav-h: 80px;
   --section-padding: 80px;
+  --transition: all 0.3s ease;
+  --border-radius: 2px;
 }
 
 * {
@@ -35,8 +38,15 @@ a {
   left: 0;
   right: 0;
   z-index: 100;
-  background: var(--light);
+  background: rgba(0, 0, 0, 0.95);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  transition: var(--transition);
+}
+
+.header.scrolled {
+  background: rgba(0, 0, 0, 0.98);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
 }
 
 .navbar {
@@ -382,7 +392,14 @@ a {
 
 .work-card {
   position: relative;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: var(--transition);
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: var(--border-radius);
+}
+
+.work-card:hover {
+  transform: translateY(-5px);
 }
 
 .work-img-wrap {
@@ -391,6 +408,14 @@ a {
   max-width: 600px;
   margin: 0 auto;
   text-align: center;
+  position: relative;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: var(--transition);
+}
+
+.work-card:hover .work-img-wrap {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
 }
 
 .work-img-wrap img {
@@ -398,23 +423,37 @@ a {
   height: auto;
   display: block;
   margin: 0 auto;
-  transition: transform 0.5s ease;
+  transition: transform 0.6s ease;
 }
 
 .work-card:hover .work-img-wrap img {
-  transform: scale(1.02);
+  transform: scale(1.05);
 }
 
 .work-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 20px;
+  background: var(--light-gray);
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+  transition: var(--transition);
+}
+
+.work-card:hover .work-meta {
+  background: var(--accent);
+  color: var(--light);
 }
 
 .work-title {
   font-size: 1.1em;
   font-weight: 500;
   letter-spacing: 0.05em;
+  transition: var(--transition);
+}
+
+.work-card:hover .work-title {
+  color: var(--light);
 }
 
 /* About section */
@@ -423,10 +462,20 @@ a {
 }
 
 .about-content {
-  font-size: 1.1em;
+  font-size: 1.2em;
   line-height: 1.8;
   max-width: 800px;
   color: var(--gray);
+  background: var(--light-gray);
+  padding: 40px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: var(--transition);
+}
+
+.about-content:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
 }
 
 /* Range section */
@@ -474,23 +523,43 @@ a {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 40px;
+  align-items: center;
+  text-align: center;
+  padding: 60px;
+  background: var(--light-gray);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: var(--transition);
+}
+
+.contact-content:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
 }
 
 .contact-email {
-  font-size: 1.5em;
+  font-size: 1.8em;
   font-weight: 500;
   letter-spacing: 0.05em;
-  transition: color 0.3s ease;
+  transition: var(--transition);
+  padding: 15px 30px;
+  border: 1px solid var(--gray);
+  border-radius: var(--border-radius);
 }
 
 .contact-email:hover {
-  color: var(--gray);
+  color: var(--primary);
+  border-color: var(--primary);
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-3px);
 }
 
 .contact-socials {
   display: flex;
-  gap: 40px;
+  gap: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .contact-socials a {
@@ -498,11 +567,17 @@ a {
   font-weight: 500;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  transition: color 0.3s ease;
+  transition: var(--transition);
+  padding: 10px 20px;
+  border: 1px solid var(--gray);
+  border-radius: var(--border-radius);
 }
 
 .contact-socials a:hover {
-  color: var(--gray);
+  color: var(--primary);
+  border-color: var(--primary);
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-3px);
 }
 
 /* Scroll animation */

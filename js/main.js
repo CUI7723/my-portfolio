@@ -2,6 +2,39 @@
 const menuBtn = document.querySelector('.menu-btn');
 const menuOverlay = document.querySelector('.menu-overlay');
 
+// 开场动画（轻量、可减少动效）
+(function introAnimation() {
+  const intro = document.querySelector('.intro');
+  if (!intro) return;
+
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) {
+    intro.remove();
+    return;
+  }
+
+  document.body.classList.add('intro-lock');
+  const minShowMs = 900;
+  const start = Date.now();
+
+  function finish() {
+    const elapsed = Date.now() - start;
+    const wait = Math.max(0, minShowMs - elapsed);
+    window.setTimeout(() => {
+      intro.classList.add('intro--hide');
+      document.body.classList.remove('intro-lock');
+      window.setTimeout(() => intro.remove(), 850);
+    }, wait);
+  }
+
+  if (document.readyState === 'complete') {
+    finish();
+  } else {
+    window.addEventListener('load', finish, { once: true });
+    window.setTimeout(finish, 2200);
+  }
+})();
+
 function setMenuOpen(isOpen) {
   menuOverlay.classList.toggle('open', isOpen);
   menuBtn.classList.toggle('open', isOpen);

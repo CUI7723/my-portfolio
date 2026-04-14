@@ -1,11 +1,25 @@
 // 移动端全屏菜单控制
-document.querySelector('.menu-btn').addEventListener('click', function(){
-  document.querySelector('.menu-overlay').classList.toggle('open');
+const menuBtn = document.querySelector('.menu-btn');
+const menuOverlay = document.querySelector('.menu-overlay');
+
+function setMenuOpen(isOpen) {
+  menuOverlay.classList.toggle('open', isOpen);
+  menuBtn.classList.toggle('open', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+}
+
+menuBtn.addEventListener('click', function () {
+  setMenuOpen(!menuOverlay.classList.contains('open'));
 });
 document.querySelectorAll('.menu-overlay a').forEach(link=>{
   link.addEventListener('click', ()=>{
-    document.querySelector('.menu-overlay').classList.remove('open');
+    setMenuOpen(false);
   });
+});
+
+// ESC 关闭菜单
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') setMenuOpen(false);
 });
 
 // 平滑滚动（兼容菜单与锚点）
@@ -70,7 +84,7 @@ window.addEventListener('scroll', function() {
 
 // 鼠标移动效果
 function handleMouseMove(e) {
-  const cursor = document.querySelector('.cursor');
+  let cursor = document.querySelector('.cursor');
   if (!cursor) {
     const newCursor = document.createElement('div');
     newCursor.className = 'cursor';

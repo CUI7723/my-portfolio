@@ -35,6 +35,101 @@ const menuOverlay = document.querySelector('.menu-overlay');
   }
 })();
 
+// subtle background parallax (mouse)
+(function backgroundParallax() {
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) return;
+
+  let raf = 0;
+  window.addEventListener('mousemove', (e) => {
+    if (raf) return;
+    raf = window.requestAnimationFrame(() => {
+      raf = 0;
+      const x = (e.clientX / window.innerWidth - 0.5) * 20;
+      const y = (e.clientY / window.innerHeight - 0.5) * 20;
+      document.documentElement.style.setProperty('--mx', `${x}px`);
+      document.documentElement.style.setProperty('--my', `${y}px`);
+    });
+  });
+})();
+
+// Work modal
+(function workModal() {
+  const modal = document.querySelector('#workModal');
+  if (!modal) return;
+
+  const img = document.querySelector('#modalImg');
+  const title = document.querySelector('#modalTitle');
+  const meta = document.querySelector('#modalMeta');
+  const desc = document.querySelector('#modalDesc');
+
+  const data = {
+    brand: {
+      title: '品牌系统',
+      meta: '2025 · Brand Identity',
+      img: 'images/JGXFJQR.jpg',
+      alt: '品牌系统',
+      desc: '以秩序与极简为核心的品牌视觉系统探索：从字标、网格与色彩到应用延展，确保一致性与识别度。'
+    },
+    space: {
+      title: '空间视觉',
+      meta: '2025 · Spatial Visual',
+      img: 'images/LHSGJ.jpg',
+      alt: '空间视觉',
+      desc: '强调材质与光影关系的空间视觉表达：通过克制的构成与细节控制，让空间呈现更安静、更有张力。'
+    },
+    illustration: {
+      title: '插画创作',
+      meta: '2026 · Illustration',
+      img: 'images/XFWRJ.jpg',
+      alt: '插画创作',
+      desc: '以图形语言与叙事节奏为导向的插画创作：在统一的形式规则下保持情绪与故事性。'
+    }
+  };
+
+  function open(key) {
+    const item = data[key];
+    if (!item) return;
+
+    img.src = item.img;
+    img.alt = item.alt;
+    title.textContent = item.title;
+    meta.textContent = item.meta;
+    desc.textContent = item.desc;
+
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function close() {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('.work-card[data-work]').forEach((card) => {
+    card.addEventListener('click', () => open(card.getAttribute('data-work')));
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        open(card.getAttribute('data-work'));
+      }
+    });
+  });
+
+  modal.addEventListener('click', (e) => {
+    const target = e.target;
+    if (target && target.matches && target.matches('[data-close]')) close();
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('open')) close();
+  });
+})();
+
 function setMenuOpen(isOpen) {
   menuOverlay.classList.toggle('open', isOpen);
   menuBtn.classList.toggle('open', isOpen);

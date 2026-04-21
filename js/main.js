@@ -64,26 +64,26 @@ const menuOverlay = document.querySelector('.menu-overlay');
   const desc = document.querySelector('#modalDesc');
 
   const data = {
-    brand: {
-      title: '品牌系统',
-      meta: '2025 · Brand Identity',
-      img: 'images/JGXFJQR.jpg',
-      alt: '品牌系统',
-      desc: '以秩序与极简为核心的品牌视觉系统探索：从字标、网格与色彩到应用延展，确保一致性与识别度。'
+    "auraflow": {
+      title: 'AuraFlow',
+      meta: '2026 · 智能穿戴 · DIA中国智造设计大赛',
+      img: 'images/auraflow-hero.jpg',
+      alt: 'AuraFlow智能情绪调节穿戴设备',
+      desc: 'AuraFlow是一款智能情绪调节穿戴设备，通过生物传感器监测用户的情绪状态，并将情绪数据转化为流动的光纹反馈。设计灵感来源于自然的流动形态，旨在帮助用户在高压环境中实时觉察和调节情绪。产品采用柔性材料和无缝编织技术，确保佩戴舒适度和持久使用。'
     },
-    space: {
-      title: '空间视觉',
-      meta: '2025 · Spatial Visual',
-      img: 'images/LHSGJ.jpg',
-      alt: '空间视觉',
-      desc: '强调材质与光影关系的空间视觉表达：通过克制的构成与细节控制，让空间呈现更安静、更有张力。'
+    "modular-light": {
+      title: 'LuminaMod',
+      meta: '2025 · 模块化照明 · 家居产品',
+      img: 'images/modular-light.jpg',
+      alt: '模块化照明系统',
+      desc: 'LuminaMod是一个模块化照明系统，允许用户根据空间需求和情绪自由组合灯具模块。每个模块都包含可调色温和亮度的LED光源，通过磁吸连接实现快速组合。设计强调几何美学和功能灵活性，适用于住宅、办公和商业空间。'
     },
-    illustration: {
-      title: '插画创作',
-      meta: '2026 · Illustration',
-      img: 'images/XFWRJ.jpg',
-      alt: '插画创作',
-      desc: '以图形语言与叙事节奏为导向的插画创作：在统一的形式规则下保持情绪与故事性。'
+    "eco-bottle": {
+      title: 'FlowVessel',
+      meta: '2025 · 可持续饮品 · 环境友好',
+      img: 'images/eco-bottle.jpg',
+      alt: '可重复使用水瓶',
+      desc: 'FlowVessel是一款采用植基材料制成的可重复使用饮水瓶，瓶身采用双层真空隔热设计，保温保冷效果持久。独特的螺纹盖设计确保100%防漏，宽口径便于清洁和添加冰块。产品整个生命循环可降解，减少对环境的影响。'
     }
   };
 
